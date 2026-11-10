@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Silence Cutter</title>
+<style>
+  :root { --bg:#232323; --panel:#2f2f2f; --text:#e4e4e4; --muted:#9a9a9a; --accent:#4a8cff; --ok:#5fc06b; --err:#e5645a; }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:12px; background:var(--bg); color:var(--text); font:12px/1.4 "Segoe UI", system-ui, sans-serif; }
+  h1 { font-size:13px; margin:0 0 10px; font-weight:600; }
+  .row { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
+  label { color:var(--muted); flex:1; }
+  input[type=number], input[type=text], select { background:var(--panel); color:var(--text); border:1px solid #444; border-radius:3px; padding:3px 5px; }
+  input[type=number] { width:90px; }
+  select { width:170px; }
+  .full { display:block; margin-bottom:8px; }
+  .full label { display:block; margin-bottom:3px; }
+  .full input { width:100%; }
+  hr { border:0; border-top:1px solid #3a3a3a; margin:10px 0; }
+  button { width:100%; padding:7px; margin-top:4px; background:var(--panel); color:var(--text); border:1px solid #555; border-radius:3px; cursor:pointer; font-size:12px; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  button:disabled { opacity:.45; cursor:default; }
+  #stats { margin:10px 0 4px; padding:8px; background:var(--panel); border-radius:3px; min-height:34px; }
+  #log { margin-top:8px; height:110px; overflow:auto; background:#1a1a1a; border-radius:3px; padding:6px; font:11px/1.35 Consolas, monospace; white-space:pre-wrap; color:var(--muted); }
+  .ok { color:var(--ok); } .err { color:var(--err); }
+  small { color:var(--muted); display:block; margin-top:6px; }
+</style>
+</head>
+<body>
+  <h1>Silence Cutter <span style="color:var(--muted);font-weight:400">v0.2</span></h1>
+
+  <div class="row"><label for="preset">Preset</label>
+    <select id="preset">
+      <option value="talking">Talking head (naturel)</option>
+      <option value="podcast">Podcast (respire)</option>
+      <option value="agressif">Agressif (shorts / TikTok)</option>
+      <option value="perso">Perso</option>
+    </select>
+  </div>
+  <div class="row"><label for="noise">Seuil de silence (dB)</label><input id="noise" type="number" value="-30" step="1" min="-80" max="-5"></div>
+  <div class="row"><label for="minDur">Silence minimum (s)</label><input id="minDur" type="number" value="0.5" step="0.1" min="0.1"></div>
+  <div class="row"><label for="pad">Marge autour de la voix (s)</label><input id="pad" type="number" value="0.10" step="0.05" min="0"></div>
+
+  <div class="row"><label for="mode">Résultat</label>
+    <select id="mode">
+      <option value="sequence">Nouvelle séquence sans silences</option>
+      <option value="markers">Marqueurs seulement (aperçu)</option>
+    </select>
+  </div>
+
+  <div class="full">
+    <label for="stream">Piste audio du fichier (vide = par défaut, 0 = 1re piste, 1 = 2e…)</label>
+    <input id="stream" type="text" value="">
+  </div>
+  <div class="full">
+    <label for="ffmpeg">Chemin de ffmpeg (laisse "ffmpeg" si installé)</label>
+    <input id="ffmpeg" type="text" value="ffmpeg">
+  </div>
+
+  <button id="btnAnalyze">1. Analyser (clips sélectionnés)</button>
+  <div id="stats">Sélectionne un ou plusieurs clips dans la timeline (rien de sélectionné = toute la piste V1), puis clique sur « Analyser ».</div>
+  <button id="btnCut" class="primary" disabled>2. Créer la séquence sans silences</button>
+
+  <div id="log"></div>
+  <small>Ta séquence d'origine n'est jamais modifiée en mode séquence. En mode marqueurs, on ajoute seulement des marqueurs « Silence ».</small>
+
+  <script src="js/engine.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
